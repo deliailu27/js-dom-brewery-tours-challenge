@@ -2,7 +2,7 @@ const stateForm = document.querySelector("#select-state-form");
 const apiURL = "https://api.openbrewerydb.org/breweries";
 
 const state = {
-  types: ["regional"],
+  types: ["micro", "brewpub", "regional"],
   usState: "",
   breweries: [],
 };
@@ -11,13 +11,17 @@ stateForm.addEventListener("submit", (event) => {
   console.log("my event", event, event.target);
   event.preventDefault();
   state.usState = event.target[0].value;
-  fetch(`${apiURL}?by_state${state.usState}&per_page=100`)
+  const URL = `${apiURL}?by_state=${state.usState}&per_page=100`;
+  console.log(URL);
+  state.breweries = [];
+  fetch(URL)
     .then((res) => {
       console.log("my fetch", res);
       return res.json();
     })
     .then((data) => {
       console.log("mydata", data);
+
       state.breweries = data;
       render();
     });
@@ -25,6 +29,7 @@ stateForm.addEventListener("submit", (event) => {
 
 function render() {
   const BreweriesList = document.querySelector(".breweries-list");
+  BreweriesList.innerHTML = ``;
 
   state.breweries.forEach((brewery) => {
     const liEl = document.createElement("li");
